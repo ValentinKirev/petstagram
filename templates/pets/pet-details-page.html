@@ -1,4 +1,6 @@
 {% extends 'base/base.html' %}
+{% load static %}
+
 {% block content %}
 
     <div class="pet-profile">
@@ -17,12 +19,12 @@
                         <!-- Pet Name -->
                         <p>Sasho</p>
                         <!-- Pet Edit Button -->
-                        <a href="">
-                            <img class="edit-img" src="/static/images/edit-pen-icon-6.jpg" alt="edit button">
+                        <a href="{% url 'edit pet' 'doncho' 'sasho' %}">
+                            <img class="edit-img" src="{% static 'images/edit-pen-icon-6.jpg' %}" alt="edit button">
                         </a>
                         <!-- Pet Delete Button -->
-                        <a href="">
-                            <img class="bin-img" src="/static/images/icon-remove-22.jpg" alt="bin button">
+                        <a href="{% url 'delete pet' 'doncho' 'sasho' %}">
+                            <img class="bin-img" src="{% static 'images/icon-remove-22.jpg' %}" alt="bin button">
                         </a>
                     </div>
                     <div class="data">
@@ -44,17 +46,17 @@
                 <div class="top">
                     <!-- User Details and image location -->
                     <div class="userDetails">
-                        <a href="profile details">
+                        <a href="{% url 'details user' 1 %}">
                             <div class="profilepic">
                                 <div class="profile_img">
                                     <div class="image">
-                                        <img src="/static/images/person.png" alt="img8">
+                                        <img src="{% static 'images/person.png' %}" alt="img8">
                                     </div>
                                 </div>
                             </div>
                         </a>
                         <h3>
-                            <a href="profile details">
+                            <a href="{% url 'details user' 1 %}">
                                 <!-- if user has first name and last name -->
                                 Diyan Kalaydzhiev
                                 <!-- else -->
@@ -69,7 +71,7 @@
                 </div>
                 <!-- Post image -->
                 <div class="imgBx" id="place the id of the photo here">
-                    <img src="/static/images/axolotl.jpeg" alt="post" class="cover">
+                    <img src="{% static 'images/axolotl.jpeg' %}" alt="post" class="cover">
                 </div>
                 <!-- -->
 
@@ -184,17 +186,17 @@
                 <div class="top">
                     <!-- User Details and image location -->
                     <div class="userDetails">
-                        <a href="profile details">
+                        <a href="{% url 'details user' 1 %}">
                             <div class="profilepic">
                                 <div class="profile_img">
                                     <div class="image">
-                                        <img src="/static/images/person.png" alt="img8">
+                                        <img src="{% static 'images/person.png' %}" alt="img8">
                                     </div>
                                 </div>
                             </div>
                         </a>
                         <h3>
-                            <a href="profile details">
+                            <a href="{% url 'details user' 1 %}">
                                 <!-- if user has first name and last name -->
                                 Diyan Kalaydzhiev
                                 <!-- else -->
@@ -323,7 +325,7 @@
             <!-- IF Photos End Pet Photos Post Section -->
 
             <!-- IF NOT Photos Show No Post Image -->
-            <img class="no-posts" src="/static/images/no_posts.png" alt="no posts image">
+            <img class="no-posts" src="{% static 'images/no_posts.png' %}" alt="no posts image">
 
         </div>
     </div>

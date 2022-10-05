@@ -1,10 +1,12 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <!-- Starts Head Section -->
 <head>
     <link rel="stylesheet"
-          href="/static/css/styles.css">
-    <link rel="icon" type="image/x-icon" href="/static/images/free-30-instagram-stories-icons23_122570.png">
+          href="{% static 'css/styles.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/free-30-instagram-stories-icons23_122570.png' %}">
     <title>Petstagram</title>
 </head>
 <!-- End Head Section -->
@@ -18,12 +20,12 @@
         <div class="container">
             <div class="logo">
                 <!-- Link to Home Page -->
-                <a href="#">
-                    <img width="50px" src="/static/images/free-30-instagram-stories-icons23_122570.png" alt="img1">
+                <a href="{% url 'index' %}">
+                    <img width="50px" src="{% static 'images/free-30-instagram-stories-icons23_122570.png' %}" alt="img1">
                 </a>
 
                 <!-- Link to Home Page -->
-                <a class="home" href="#">
+                <a class="home" href="{% url 'index' %}">
                     <i>Petstagram</i>
                 </a>
             </div>
@@ -33,35 +35,35 @@
                     <li class="nav-item">
 
                         <!-- Link to Add Pet Page -->
-                        <a href="#">
+                        <a href="{% url 'add pet' %}">
                             <i>Add Pet</i>
                         </a>
                     </li>
                     <li class="nav-item">
 
                         <!-- Link to Add Photo Page -->
-                        <a href="#">
+                        <a href="{% url 'add photo' %}">
                             <i>Add Photo</i>
                         </a>
                     </li>
                     <li class="nav-item">
 
                         <!-- Link to Login Page -->
-                        <a href="#">
+                        <a href="{% url 'login user' %}">
                             <i>Login</i>
                         </a>
                     </li>
                     <li class="nav-item">
 
                         <!-- Link to Register Page -->
-                        <a href="">
+                        <a href="{% url 'register user' %}">
                             <i>Register</i>
                         </a>
                     </li>
                     <li class="nav-item">
 
                         <!-- Link to Profile Page -->
-                        <a href="#">
+                        <a href="{% url 'details user' 1 %}">
                             <i>Profile</i>
                         </a>
                     </li>
