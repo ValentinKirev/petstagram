@@ -1,5 +1,7 @@
 from django.urls import path
 
+from petstagram.pets.views import *
+
 urlpatterns = [
     path('add/', add_pet, name='add pet'),
     path('<str:username>/pet/<slug:pet_name>/', details_pet, name='details pet'),
