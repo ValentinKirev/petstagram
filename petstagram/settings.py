@@ -15,6 +15,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'petstagram.common',
+    'petstagram.accounts',
+    'petstagram.pets',
+    'petstagram.photos',
 ]
 
 MIDDLEWARE = [
@@ -25,11 +30,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    'petstagram.common',
-    'petstagram.accounts',
-    'petstagram.pets',
-    'petstagram.photos',
 ]
 
 ROOT_URLCONF = 'petstagram.urls'

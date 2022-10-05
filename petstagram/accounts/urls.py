@@ -1,6 +1,6 @@
 from django.urls import path
 
-from petstagram.accounts.views import *
+from petstagram.accounts.views import register_user, login_user, details_user, edit_user, delete_user
 
 urlpatterns = [
     path('register/', register_user, name='register user'),

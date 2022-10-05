@@ -72,8 +72,9 @@
 </header>
 <!-- End Header Section with Navigation Bar -->
 
-<!-- Starts Main Section -->
-<main>
+{% extends 'base/base.html' %}
+{% block content %}
+
     <div class="container">
         <div class="col-9">
 
@@ -519,16 +520,5 @@
 
         </div>
     </div>
-</main>
-<!-- End Main Section -->
 
-<!-- Start Footer Section -->
-<div class="footer">
-		<span class="footer-section">
-			© 2022 SOFTUNI WORKSHOP FOR PYTHON WEB MODULE
-		</span>
-</div>
-<!-- End Footer Section -->
-
-</body>
-</html>
+{% endblock %}
