@@ -4,6 +4,9 @@ from petstagram.photos.models import Photo
 
 
 class Comment(models.Model):
+    class META:
+        ordering = ['-date_time_of_publication']
+
     COMMENT_TEXT_MAX_LENGTH = 300
 
     text = models.TextField(
