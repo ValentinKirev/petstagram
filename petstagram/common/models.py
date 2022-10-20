@@ -1,11 +1,14 @@
 from django.db import models
 
+from petstagram.core.model_mixins import StrFromFieldMixin
 from petstagram.photos.models import Photo
 
 
-class Comment(models.Model):
-    class META:
-        ordering = ['-date_time_of_publication']
+class Comment(StrFromFieldMixin, models.Model):
+    str_fields = ('text', 'date_time_of_publication', 'to_photo')
+
+    class Meta:
+        ordering = ["-date_time_of_publication"]
 
     COMMENT_TEXT_MAX_LENGTH = 300
 
@@ -30,6 +33,7 @@ class Comment(models.Model):
 
 
 class Like(models.Model):
+    str_fields = ('to_photo', )
 
     to_photo = models.ForeignKey(
         to=Photo,
