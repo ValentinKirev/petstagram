@@ -36,33 +36,23 @@
                             <!-- IF the viewer is the creator of the photo -->
                             <div class="edit-delete-btns">
 
-                                <!-- Link to Edit Pet Photo Page -->
                                 <a href={% url 'edit photo' photo.id %}>
                                     <img class="edit-img" src="{% static 'images/edit-pen-icon-6.jpg' %}"
                                          alt="edit button">
                                 </a>
-
-                                <!-- Link to Delete Pet Photo Page -->
-                                <a href={% url 'edit photo' photo.id %}>
+                                <a href={% url 'delete photo' photo.id %}>
                                     <img class="bin-img" src="{% static 'images/icon-remove-22.jpg' %}"
                                          alt="bin button">
                                 </a>
                             </div>
-                            <!-- End IF the viewer is the creator of the photo -->
-
                         </h3>
                     </div>
                     <!-- End User Details and Image Location Section -->
 
                 </div>
-
-                <!-- Start Pet Photo -->
                 <div class="imgBx" id={{ photo.id }}>
-                    <!-- Pet Photo -->
-                    <img src="{% static 'images/axolotl.jpeg' %}" alt="post" class="cover">
+                    <img src="{{ photo.photo.url }}" alt="post" class="cover">
                 </div>
-                <!-- End Pet Photo -->
-
                 <div class="bottom">
 
                     <!-- Start Like and Share Buttons Section -->
@@ -178,36 +168,24 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- End Comments Section -->
                     {% endfor %}
-                </div>
-
-                <!-- Start Add Comments Section -->
-                <div class="add-comment-details">
-                    <div class="addComments">
-                        <div class="reaction">
-                            <h3>
-                                <i class="far fa-smile"></i>
-                            </h3>
+                    <div class="add-comment-details">
+                        <div class="addComments">
+                            <div class="reaction">
+                                <h3>
+                                    <i class="far fa-smile"></i>
+                                </h3>
+                            </div>
+                            <form action="{% url 'comment' photo.id %}" method="post">
+                                {{ form }}
+                                {% csrf_token %}
+                                <button type="submit">Post</button>
+                            </form>
                         </div>
-
-                        <!-- Start Add Comments Form -->
-                        <form method="post" action="#">
-                            <label for="id_body">Body:</label>
-                            <textarea name="body" cols="40" rows="10" placeholder="Add comment..." maxlength="300"
-                                      required="" id="id_body"></textarea>
-                            <!-- Post Comments Button -->
-                            <button type="submit">Post</button>
-                        </form>
-                        <!-- End Add Comments Form -->
-
                     </div>
-                <!-- End Add Comments Section -->
+                </div>
             </div>
         </div>
-        <!-- End Pet Photo Post Section -->
-
-    </div>
     </div>
 
 {% endblock %}

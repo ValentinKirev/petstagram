@@ -1,11 +1,8 @@
 from django.db import models
 from django.utils.text import slugify
 
-from petstagram.core.model_mixins import StrFromFieldMixin
 
-
-class Pet(StrFromFieldMixin, models.Model):
-    str_fields = ('id', 'name')
+class Pet(models.Model):
     NAME_MAX_LENGTH = 30
 
     name = models.CharField(
@@ -37,3 +34,6 @@ class Pet(StrFromFieldMixin, models.Model):
             self.slug = slugify(f"{self.name}-{self.id}")
 
         return super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
