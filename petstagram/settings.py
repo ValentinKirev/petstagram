@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from django.urls import reverse_lazy
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-4g2qlg^vymdj=oq$2l)gi9edd+)d03y41^8!fs=243syu=6*t9'
@@ -96,3 +98,11 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'accounts.AppUser'
+
+LOGIN_URL = reverse_lazy('login user')
+
+LOGIN_REDIRECT_URL = reverse_lazy('index')
+
+LOGOUT_REDIRECT_URL = reverse_lazy('login user')
