@@ -1,49 +1,41 @@
 {% load static %}
 
 <div class="card">
-
-    <!-- Start User Details and Image Location -->
     <div class="top">
         <div class="userDetails">
-            <!-- Link to User Profile Page -->
-            <a href="{% url 'details user' 1 %}">
+            <a href="{% url 'details user' photo.user.id %}">
                 <div class="profilepic">
                     <div class="profile_img">
                         <div class="image">
-                            <img src="{% static 'images/person.png' %}" alt="img8">
+                            {% if photo.user.profile_picture %}
+                                <img src="{{ photo.user.profile_picture }}" alt="img8">
+                            {% else %}
+                                <img src="{% static 'images/person.png' %}" alt="img8">
+                            {% endif %}
                         </div>
                     </div>
                 </div>
             </a>
             <h3>
-                <!-- Link to User Profile Page -->
-                <a href="{% url 'details user' 1 %}">
-                    <!-- if user has first name and last name -->
-                    Diyan Kalaydzhiev
-                    <!-- else -->
-                    <!-- show user username -->
+                <a href="{% url 'details user' photo.user.id %}">
+                    {{ photo.user.get_user_name }}
                 </a>
                 <br>
-                <!-- if the photo has location -->
                 {% if photo.location %}
                     <span>{{ photo.location }}</span>
                 {% endif %}
             </h3>
         </div>
     </div>
-    <!-- End User Details and Image Location -->
     <div class="imgBx" id={{ photo.id }}>
         <img src="{{ photo.photo.url }}" alt="image of {{ photo.tagged_pets.all|join:', ' }}" class="cover">
     </div>
-    <!-- Start Like and Share Buttons -->
     <div class="bottom">
         <div class="actionBtns">
             <div class="left">
-                <!-- Start Like Button -->
                 <span class="heart">
 									<a href={% url 'like' photo_id=photo.id %}>
-										<!-- if user has liked the photo -->
-                                        {% if photo.is_liked_by_user %}
+                                        {% if photo.id in photos_liked_by_current_user %}
                                             <svg style="color: red"
                                                  xmlns="http://www.w3.org/2000/svg"
                                                  width="24"
@@ -51,15 +43,12 @@
                                                  fill="currentColor"
                                                  class="bi bi-heart-fill"
                                                  viewBox="0 0 16 16">
-                                            <!-- Coordinate path -->
                                             <path fill-rule="evenodd"
                                                   d="M8 1.314C12.438-3.248 23.534 4.735
                                                   8 15-7.534 4.736 3.562-3.248 8 1.314z"
                                                   fill="red">
-
                                             </path>
                                         </svg>
-                                            <!-- else -->
                                         {% else %}
                                             <svg aria-label="Like"
                                                  color="#262626"
@@ -68,7 +57,6 @@
                                                  role="img"
                                                  viewBox="0 0 48 48"
                                                  width="24">
-                                        <!-- Coordinate path -->
                                         <path d="M34.6 6.1c5.7 0 10.4 5.2 10.4
                                                     11.5 0 6.8-5.9 11-11.5 16S25 41.3 24
                                                     41.9c-1.1-.7-4.7-4-9.5-8.3-5.7-5-11.5-9.2-11.5-16C3
@@ -86,10 +74,7 @@
                                         {% endif %}
 								</a>
 								</span>
-                <!-- End Like Button -->
-
-                <!-- Start Share Button -->
-                <a href={% url 'share' photo.id %} >
+                <a href={% url 'share' photo.id %}>
                     <svg aria-label="Share Post" class="_8-yf5 " color="#262626" fill="#262626"
                          height="24" role="img" viewBox="0 0 48 48" width="24">
                         <path d="M47.8 3.8c-.3-.5-.8-.8-1.3-.8h-45C.9 3.1.3
@@ -101,31 +86,19 @@
                         </path>
                     </svg>
                 </a>
-                <!-- End Share Button -->
-
             </div>
         </div>
-        <!-- End Like and Share Buttons -->
-
-        <!-- Number of Likes per Photo -->
-        <p class="likes">{{ photo.likes_count }} likes</p>
-
-        <!-- Start Tagged Pets -->
-
+        <p class="likes">{{ photo.like_set.count }} likes</p>
         {% for pet in photo.tagged_pets.all %}
-            <a href="{% url 'details pet' "username" pet.slug %}">
+            <a href="{% url 'details pet' pet.user.username pet.slug %}">
                 <p class="message">
                     <b>{{ pet.name }}</b>
                 </p>
             </a>
         {% endfor %}
-
-        <!-- Link to Photo Details Page -->
         <a href="{% url 'details photo' photo.id %}">
             <h4 class="details">See details</h4>
         </a>
-
-        <!-- Date of Publication -->
         <h5 class="postTime">{{ photo.date_of_publication }}</h5>
         <div class="addComments">
             <div class="reaction">

@@ -6,7 +6,7 @@ from petstagram.photos.models import Photo
 class CreatePhotoForm(forms.ModelForm):
     class Meta:
         model = Photo
-        fields = '__all__'
+        exclude = ['user']
         labels = {
             'photo': 'Photo file',
             'tagged_pets': 'Tag Pets'

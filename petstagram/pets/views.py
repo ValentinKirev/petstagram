@@ -1,15 +1,20 @@
+from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect
 
 from petstagram.common.forms import CommentForm
 from petstagram.pets.forms import CreatePetForm, EditPetForm, DeletePetForm
 from petstagram.pets.models import Pet
 
+UserModel = get_user_model()
+
 
 def add_pet(request):
     add_pet_form = CreatePetForm(request.POST or None)
 
     if add_pet_form.is_valid():
-        add_pet_form.save()
+        pet = add_pet_form.save(commit=False)
+        pet.user = request.user
+        pet.save()
         return redirect('details user', pk=1)
 
     context = {
@@ -23,12 +28,14 @@ def details_pet(request, username, slug):
     pet = Pet.objects.get(slug=slug)
     all_photos = pet.photo_set.all()
     comment_form = CommentForm()
+    owner = UserModel.objects.get(username=username)
 
     context = {
         'pet': pet,
         'pet_photos': all_photos,
         'pet_photos_count': all_photos.count(),
-        'comment_form': comment_form
+        'comment_form': comment_form,
+        'owner': owner
     }
 
     return render(request, 'pets/pet-details-page.html', context)

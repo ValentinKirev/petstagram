@@ -9,7 +9,11 @@ def add_photo(request):
     add_photo_form = CreatePhotoForm(request.POST or None, request.FILES or None)
 
     if add_photo_form.is_valid():
-        add_photo_form.save()
+        photo = add_photo_form.save(commit=False)
+        photo.user = request.user
+        photo.save()
+        add_photo_form.save_m2m()
+
         return redirect('index')
 
     context = {
@@ -24,13 +28,16 @@ def details_photo(request, pk):
     likes = photo.like_set.all()
     comments = photo.comment_set.all()
     comment_form = CommentForm()
+    photo_is_liked_by_user = likes.filter(user=request.user)
 
     context = {
         'photo': photo,
         'photo_likes': likes,
         'photo_comments': comments,
         'photo_likes_count': likes.count(),
-        'form': comment_form
+        'form': comment_form,
+        'user_is_owner': request.user == photo.user,
+        'photo_is_liked_by_user': photo_is_liked_by_user
     }
 
     return render(request, 'photos/photo-details-page.html', context)

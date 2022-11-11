@@ -1,10 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.views import LoginView, LogoutView
-from django.shortcuts import render
+from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
 
-from petstagram.accounts.forms import UserCreateForm, LoginForm
+from petstagram.accounts.forms import UserCreateForm, LoginForm, UserEditForm, UserDeleteForm
 
 UserModel = get_user_model()
 
@@ -25,13 +25,48 @@ class SignOutView(LogoutView):
     pass
 
 
-def details_user(request, pk):
-    return render(request, 'accounts/profile-details-page.html')
+class UserEditView(UpdateView):
+    template_name = 'accounts/profile-edit-page.html'
+    model = UserModel
+    form_class = UserEditForm
+
+    def get_success_url(self):
+        return reverse_lazy('details user', kwargs={
+            'pk': self.object.pk
+        })
 
 
-def edit_user(request, pk):
-    return render(request, 'accounts/profile-edit-page.html')
+class UserDetailsView(DetailView):
+    template_name = 'accounts/profile-details-page.html'
+    model = UserModel
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        photos = self.object.photo_set.prefetch_related('like_set')
+
+        context['photos_count'] = photos.count()
+        context['pets_count'] = self.object.pet_set.count()
+        context['likes_count'] = sum(photo.like_set.count() for photo in photos)
+
+        return context
 
 
-def delete_user(request, pk):
-    return render(request, 'accounts/profile-delete-page.html')
+class UserDeleteView(DeleteView):
+    template_name = 'accounts/profile-delete-page.html'
+    model = UserModel
+    form_class = UserDeleteForm
+    success_url = reverse_lazy('index')
+
+    def form_valid(self, form, success_url=success_url):
+        photos = self.object.photo_set.all()
+
+        for photo in photos:
+            photo.comment_set.all().delete()
+
+        self.object.like_set.all().delete()
+        self.object.pet_set.all().delete()
+        self.object.comment_set.all().delete()
+        self.object.delete()
+
+        return HttpResponseRedirect(success_url)

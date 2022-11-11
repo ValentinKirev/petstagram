@@ -1,7 +1,10 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 
 from petstagram.core.model_mixins import StrFromFieldMixin
 from petstagram.photos.models import Photo
+
+UserModel = get_user_model()
 
 
 class Comment(StrFromFieldMixin, models.Model):
@@ -31,6 +34,11 @@ class Comment(StrFromFieldMixin, models.Model):
         blank=True
     )
 
+    user = models.ForeignKey(
+        UserModel,
+        on_delete=models.RESTRICT
+    )
+
 
 class Like(models.Model):
     str_fields = ('to_photo', )
@@ -40,4 +48,9 @@ class Like(models.Model):
         on_delete=models.RESTRICT,
         null=False,
         blank=True
+    )
+
+    user = models.ForeignKey(
+        UserModel,
+        on_delete=models.RESTRICT
     )
