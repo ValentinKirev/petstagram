@@ -16,7 +16,7 @@ class CreatePhotoForm(forms.ModelForm):
 class EditPhotoForm(forms.ModelForm):
     class Meta:
         model = Photo
-        exclude = ['photo']
+        exclude = ['photo', 'user']
         labels = {
             'tagged_pets': 'Tag Pets'
         }

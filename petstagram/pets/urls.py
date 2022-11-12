@@ -1,10 +1,11 @@
+from django.contrib.auth.decorators import login_required
 from django.urls import path
 
-from petstagram.pets.views import add_pet, details_pet, edit_pet, delete_pet
+from petstagram.pets.views import PetAddView, PetDetailView, PetEditView, PetDeleteView
 
 urlpatterns = [
-    path('add/', add_pet, name='add pet'),
-    path('<str:username>/pet/<slug:slug>/', details_pet, name='details pet'),
-    path('<str:username>/pet/<slug:slug>/edit/', edit_pet, name='edit pet'),
-    path('<str:username>/pet/<slug:slug>/delete/', delete_pet, name='delete pet')
+    path('add/', login_required(PetAddView.as_view()), name='add pet'),
+    path('<str:username>/pet/<slug:slug>/', PetDetailView.as_view(), name='details pet'),
+    path('<str:username>/pet/<slug:slug>/edit/', PetEditView.as_view(), name='edit pet'),
+    path('<str:username>/pet/<slug:slug>/delete/', PetDeleteView.as_view(), name='delete pet')
 ]

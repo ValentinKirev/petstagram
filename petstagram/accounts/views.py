@@ -5,6 +5,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
 
 from petstagram.accounts.forms import UserCreateForm, LoginForm, UserEditForm, UserDeleteForm
+from petstagram.core.view_mixins import UserOwnerMixin
 
 UserModel = get_user_model()
 
@@ -25,7 +26,7 @@ class SignOutView(LogoutView):
     pass
 
 
-class UserEditView(UpdateView):
+class UserEditView(UserOwnerMixin, UpdateView):
     template_name = 'accounts/profile-edit-page.html'
     model = UserModel
     form_class = UserEditForm
@@ -52,7 +53,7 @@ class UserDetailsView(DetailView):
         return context
 
 
-class UserDeleteView(DeleteView):
+class UserDeleteView(UserOwnerMixin, DeleteView):
     template_name = 'accounts/profile-delete-page.html'
     model = UserModel
     form_class = UserDeleteForm

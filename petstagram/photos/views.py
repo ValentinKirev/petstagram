@@ -1,73 +1,64 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
 
 from petstagram.common.forms import CommentForm
+from petstagram.core.view_mixins import UserOwnerMixin
 from petstagram.photos.forms import CreatePhotoForm, EditPhotoForm
 from petstagram.photos.models import Photo
 
 
-def add_photo(request):
-    add_photo_form = CreatePhotoForm(request.POST or None, request.FILES or None)
+class PhotoAddView(CreateView):
+    template_name = 'photos/photo-add-page.html'
+    model = Photo
+    form_class = CreatePhotoForm
 
-    if add_photo_form.is_valid():
-        photo = add_photo_form.save(commit=False)
-        photo.user = request.user
+    def form_valid(self, form):
+        photo = form.save(commit=False)
+        photo.user = self.request.user
         photo.save()
-        add_photo_form.save_m2m()
-
+        form.save_m2m()
         return redirect('index')
 
-    context = {
-        'form': add_photo_form
-    }
 
-    return render(request, 'photos/photo-add-page.html', context)
+class PhotoDetailsView(DetailView):
+    template_name = 'photos/photo-details-page.html'
+    model = Photo
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        photo = self.object
+        likes = self.object.like_set.all()
 
-def details_photo(request, pk):
-    photo = Photo.objects.get(pk=pk)
-    likes = photo.like_set.all()
-    comments = photo.comment_set.all()
-    comment_form = CommentForm()
-    photo_is_liked_by_user = likes.filter(user=request.user)
+        context['photo_likes'] = likes
+        context['photo_comments'] = self.object.comment_set.all()
+        context['photo_likes_count'] = likes.count()
+        context['user_is_owner'] = self.request.user == photo.user
+        context['photo_is_liked_by_user'] = likes.filter(user=self.request.user)
+        context['form'] = CommentForm()
 
-    context = {
-        'photo': photo,
-        'photo_likes': likes,
-        'photo_comments': comments,
-        'photo_likes_count': likes.count(),
-        'form': comment_form,
-        'user_is_owner': request.user == photo.user,
-        'photo_is_liked_by_user': photo_is_liked_by_user
-    }
-
-    return render(request, 'photos/photo-details-page.html', context)
+        return context
 
 
-def edit_photo(request, pk):
-    photo = Photo.objects.filter(pk=pk)\
-        .get()
+class PhotoEditView(UserOwnerMixin, UpdateView):
+    template_name = 'photos/photo-edit-page.html'
+    model = Photo
+    form_class = EditPhotoForm
 
-    if request.method == 'GET':
-        edit_photo_form = EditPhotoForm(instance=photo)
-    else:
-        edit_photo_form = EditPhotoForm(request.POST, instance=photo)
-        if edit_photo_form.is_valid():
-            edit_photo_form.save()
-            return redirect('details photo', pk=pk)
-
-    context = {
-        'form': edit_photo_form,
-        'pk': pk
-    }
-
-    return render(request, 'photos/photo-edit-page.html', context)
+    def get_success_url(self):
+        return reverse_lazy('details photo', kwargs={
+            'pk': self.object.pk
+        })
 
 
-def delete_photo(request, pk):
-    photo = Photo.objects.filter(pk=pk)\
-        .get()
-    photo.like_set.all().delete()
-    photo.comment_set.all().delete()
-    photo.delete()
+class PhotoDeleteView(UserOwnerMixin, DeleteView):
+    model = Photo
+    success_url = reverse_lazy('index')
 
-    return redirect('index')
+    def get(self, request, *args, **kwargs):
+        photo = Photo.objects.filter(pk=kwargs['pk']).get()
+        photo.like_set.all().delete()
+        photo.comment_set.all().delete()
+        photo.delete()
+
+        return redirect('index')

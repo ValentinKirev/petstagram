@@ -1,82 +1,73 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
 
 from petstagram.common.forms import CommentForm
+from petstagram.core.view_mixins import UserOwnerMixin
 from petstagram.pets.forms import CreatePetForm, EditPetForm, DeletePetForm
 from petstagram.pets.models import Pet
 
 UserModel = get_user_model()
 
 
-def add_pet(request):
-    add_pet_form = CreatePetForm(request.POST or None)
+class PetAddView(CreateView):
+    template_name = 'pets/pet-add-page.html'
+    form_class = CreatePetForm
+    model = Pet
 
-    if add_pet_form.is_valid():
-        pet = add_pet_form.save(commit=False)
-        pet.user = request.user
+    def form_valid(self, form):
+        pet = form.save(commit=False)
+        pet.user = self.request.user
         pet.save()
-        return redirect('details user', pk=1)
-
-    context = {
-        'form': add_pet_form
-    }
-
-    return render(request, 'pets/pet-add-page.html', context)
+        return redirect('details user', self.request.user.pk)
 
 
-def details_pet(request, username, slug):
-    pet = Pet.objects.get(slug=slug)
-    all_photos = pet.photo_set.all()
-    comment_form = CommentForm()
-    owner = UserModel.objects.get(username=username)
+class PetDetailView(DetailView):
+    template_name = 'pets/pet-details-page.html'
+    model = Pet
 
-    context = {
-        'pet': pet,
-        'pet_photos': all_photos,
-        'pet_photos_count': all_photos.count(),
-        'comment_form': comment_form,
-        'owner': owner
-    }
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        pet_photos = self.object.photo_set.all()
 
-    return render(request, 'pets/pet-details-page.html', context)
+        context['pet_photos'] = pet_photos
+        context['pet_photos_count'] = pet_photos.count()
+        context['comment_form'] = CommentForm()
+        context['owner'] = self.object.user
+        return context
 
 
-def edit_pet(request, username, slug):
-    pet = Pet.objects.filter(slug=slug).\
-        get()
+class PetEditView(UserOwnerMixin, UpdateView):
+    template_name = 'pets/pet-edit-page.html'
+    model = Pet
+    form_class = EditPetForm
 
-    if request.method == "GET":
-        edit_pet_form = EditPetForm(instance=pet)
-    else:
-        edit_pet_form = EditPetForm(request.POST, instance=pet)
-
-        if edit_pet_form.is_valid():
-            edit_pet_form.save()
-            return redirect('details pet', username, slug)
-
-    context = {
-        'form': edit_pet_form,
-        'username': username,
-        'slug': slug
-    }
-
-    return render(request, 'pets/pet-edit-page.html', context)
+    def get_success_url(self):
+        return reverse_lazy('details pet', kwargs={
+            'username': self.object.user.username,
+            'slug': self.object.slug
+        })
 
 
-def delete_pet(request, username, slug):
-    pet = Pet.objects.filter(slug=slug).\
-        get()
+class PetDeleteView(UserOwnerMixin, DeleteView):
+    template_name = 'pets/pet-delete-page.html'
+    model = Pet
+    form_class = DeletePetForm
 
-    if request.method == "POST":
-        pet.delete()
-        return redirect('details user', pk=1)
+    def get_success_url(self):
+        return reverse_lazy('details user', kwargs={
+            'pk': self.request.user.id
+        })
 
-    delete_pet_form = DeletePetForm(instance=pet)
+    def get(self, request, *args, **kwargs):
+        form = self.form_class(instance=self.get_object())
+        context = {
+            'form': form,
+            'slug': kwargs['slug']
+        }
+        return render(request, self.template_name, context)
 
-    context = {
-        'form': delete_pet_form,
-        'username': username,
-        'slug': slug
-    }
-
-    return render(request, 'pets/pet-delete-page.html', context)
+    def post(self, request, *args, **kwargs):
+        self.get_object().delete()
+        return redirect('details user', request.user.id)

@@ -10,6 +10,9 @@ UserModel = get_user_model()
 
 
 class Photo(StrFromFieldMixin, models.Model):
+    class Meta:
+        ordering = ['-date_of_publication', 'id']
+
     str_fields = ('id', 'photo', 'description')
 
     DESCRIPTION_MAX_LENGTH = 300

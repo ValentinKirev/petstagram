@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, resolve_url
+from django.views.generic import TemplateView
 from pyperclip import copy
 
 from petstagram.common.forms import CommentForm, SearchForm
@@ -6,29 +7,33 @@ from petstagram.common.models import Like
 from petstagram.photos.models import Photo
 
 
-def index(request):
-    all_photos = Photo.objects.all()
-    comment_form = CommentForm()
-    search_form = SearchForm()
+class IndexView(TemplateView):
+    template_name = 'common/home-page.html'
 
-    photos_liked_by_current_user = []
-    if request.user.is_authenticated:
-        photos_liked_by_current_user = [like.to_photo_id for like in request.user.like_set.all()]
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
 
-    if request.method == 'POST':
+        context['photos'] = Photo.objects.all()
+        context['comment_form'] = CommentForm()
+        context['search_form'] = SearchForm()
+
+        photos_liked_by_current_user = []
+        if self.request.user.is_authenticated:
+            photos_liked_by_current_user = [like.to_photo_id for like in self.request.user.like_set.all()]
+
+        context['photos_liked_by_current_user'] = photos_liked_by_current_user
+
+        return context
+
+    def post(self, request, *args, **kwargs):
         search_form = SearchForm(request.POST)
         if search_form.is_valid():
             search_pattern = search_form.cleaned_data['pet_name']
-            all_photos = all_photos.filter(tagged_pets__name__icontains=search_pattern)
 
-    context = {
-        'photos': all_photos,
-        'comment_form': comment_form,
-        'search_form': search_form,
-        'photos_liked_by_current_user': photos_liked_by_current_user
-    }
+            context = self.get_context_data()
+            context['photos'] = context['photos'].filter(tagged_pets__name__icontains=search_pattern)
 
-    return render(request, 'common/home-page.html', context)
+            return render(request, self.template_name, context)
 
 
 def like_functionality(request, photo_id):
@@ -53,7 +58,7 @@ def share_functionality(request, photo_id):
 
 def add_comment_functionality(request, photo_id):
     if request.method == "POST":
-        photo = Photo.objects.filter(id=photo_id)\
+        photo = Photo.objects.filter(id=photo_id) \
             .get()
         comment_form = CommentForm(request.POST)
 
