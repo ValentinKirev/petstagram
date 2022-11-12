@@ -36,7 +36,7 @@
                 <h3 class="names">{{ object.get_user_name }}</h3>
                 <p class="email">{{ object.email }}</p>
                 {% if object.gender != 'Do not show' %}
-                    <p class="gender">Male</p>
+                    <p class="gender">{{ object.gender }}</p>
                 {% endif %}
             </div>
         </div>

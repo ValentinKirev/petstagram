@@ -64,9 +64,11 @@ class UserDeleteView(UserOwnerMixin, DeleteView):
 
         for photo in photos:
             photo.comment_set.all().delete()
+            photo.like_set.all().delete()
 
         self.object.like_set.all().delete()
         self.object.pet_set.all().delete()
+        photos.delete()
         self.object.comment_set.all().delete()
         self.object.delete()
 

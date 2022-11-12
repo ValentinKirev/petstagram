@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, resolve_url
+from django.views import View
 from django.views.generic import TemplateView
 from pyperclip import copy
 
@@ -37,6 +38,9 @@ class IndexView(TemplateView):
 
 
 def like_functionality(request, photo_id):
+    if not request.user.is_authenticated:
+        return redirect('login user')
+
     photo = Photo.objects.get(id=photo_id)
     liked_object = Like.objects.filter(to_photo_id=photo_id, user=request.user)\
         .first()
@@ -57,6 +61,9 @@ def share_functionality(request, photo_id):
 
 
 def add_comment_functionality(request, photo_id):
+    if not request.user.is_authenticated:
+        return redirect('login user')
+
     if request.method == "POST":
         photo = Photo.objects.filter(id=photo_id) \
             .get()
