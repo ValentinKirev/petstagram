@@ -2,12 +2,11 @@ version: '3.4'
 
 services:
   web:
-    image: petstagram
-    container_name: petstagram
+    image: kirev666/petstagram
     build: ./petstagram
     command: gunicorn petstagram.wsgi:application --bind 0.0.0.0:8000
     volumes:
-      - .staticfiles:/home/app/web/staticfiles
+      - ./staticfiles:/home/app/web/staticfiles
       - ./media:/home/app/web/media
     ports:
       - 8000:8000
