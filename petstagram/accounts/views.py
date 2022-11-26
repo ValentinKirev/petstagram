@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.views import LoginView, LogoutView
+from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
@@ -44,12 +45,16 @@ class UserDetailsView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        photos = self.object.photo_set.prefetch_related('like_set')
+        all_photos = self.object.photo_set.prefetch_related('like_set')
+        photos_for_pagination = self.object.photo_set.all()
+        paginator = Paginator(photos_for_pagination, 2)
+        page_number = self.request.GET.get('page') or 1
+        page_object = paginator.get_page(page_number)
 
-        context['photos_count'] = photos.count()
+        context['photos_count'] = all_photos.count()
         context['pets_count'] = self.object.pet_set.count()
-        context['likes_count'] = sum(photo.like_set.count() for photo in photos)
-
+        context['likes_count'] = sum(photo.like_set.count() for photo in all_photos)
+        context['page_object'] = page_object
         return context
 
 

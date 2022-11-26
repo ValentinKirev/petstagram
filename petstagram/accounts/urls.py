@@ -10,3 +10,5 @@ urlpatterns = [
     path('profile/<int:pk>/edit/', UserEditView.as_view(), name='edit user'),
     path('profile/<int:pk>/delete/', UserDeleteView.as_view(), name='delete user')
 ]
+
+from .signals import *
