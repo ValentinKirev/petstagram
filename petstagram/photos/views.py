@@ -34,7 +34,7 @@ class PhotoDetailsView(DetailView):
         context['photo_comments'] = self.object.comment_set.all()
         context['photo_likes_count'] = likes.count()
         context['user_is_owner'] = self.request.user == photo.user
-        context['photo_is_liked_by_user'] = likes.filter(user=self.request.user)
+        context['photo_is_liked_by_user'] = likes.filter(user=self.request.user if self.request.user.is_authenticated else False)
         context['form'] = CommentForm()
 
         return context

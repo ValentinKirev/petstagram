@@ -4,7 +4,7 @@ from django.db import models
 
 from petstagram.core.model_mixins import StrFromFieldMixin
 from petstagram.pets.models import Pet
-from petstagram.photos.validators import validate_image_sile_less_than_5mb
+from petstagram.photos.validators import validate_image_size_less_than_5mb
 
 UserModel = get_user_model()
 
@@ -20,7 +20,7 @@ class Photo(StrFromFieldMixin, models.Model):
 
     photo = models.ImageField(
         upload_to='images',
-        validators=(validate_image_sile_less_than_5mb,),
+        validators=(validate_image_size_less_than_5mb,),
         null=False,
         blank=False,
     )

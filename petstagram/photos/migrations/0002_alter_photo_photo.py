@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='photo',
             name='photo',
-            field=models.ImageField(upload_to='media_files/pet_photos/', validators=[petstagram.photos.validators.validate_image_sile_less_than_5mb]),
+            field=models.ImageField(upload_to='media_files/pet_photos/', validators=[petstagram.photos.validators.validate_image_size_less_than_5mb]),
         ),
     ]
